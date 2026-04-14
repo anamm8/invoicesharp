@@ -1,0 +1,65 @@
+@{
+    // Define o título da página
+    ViewData["Title"] = "Criar Cliente";
+}
+
+<!-- Container Bootsrap para centralizar e dar margem -->
+<div class="container mt-4">
+
+    <!-- Card (Caixa visual) -->
+    <div class="card shadow">
+
+        <!-- Cabeçalho do card -->
+        <div class="card-header bg-primary text-white">
+            <h3>Criar Cliente</h3>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Formulário -->
+            <!-- method = "post" -> envia dados para o servidor -->
+            <!-- action = "Client/Create" -> endpoint do controller -->
+            <form method="post" action="/Client/Create">
+
+                <!-- Campo: Nome -->
+                <div class="mb-3">
+                    <label class="form-label">Nome</label>
+
+                    <!-- 
+                        name = "Nome" -> nome do campo enviado para o controller
+                        class = "form-control" -> estilo Bootstrap
+                        required -> obrigatório (validação no browser)
+                    -->     
+                    <input name="Nome"
+                           class="form-control" required 
+                           placeholder = "Ex: Rafael"
+                           required />
+                </div>
+
+                <!-- Campo: NIF -->
+                <div class="mb-3">
+                    <label class="form-label">NIF</label>
+
+                    <!-- 
+                        type = "number" -> só aceita números
+                        name = "Nif" -> será recebido no controller
+                    -->
+                    <input name="Nif"
+                           type="number"
+                           class="form-control"
+                           placeholder = "123456789"
+                           required />
+                </div>
+
+                <!-- Botão de Submissão -->
+                <!-- type = "submit" -> envia o formulário -->
+                <button type="submit" class="btn btn-success">
+                    Guardar Cliente
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
