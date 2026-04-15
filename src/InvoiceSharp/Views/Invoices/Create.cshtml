@@ -21,35 +21,75 @@
             <!-- action = "Client/Create" -> endpoint do controller -->
             <form method="post" action="/Client/Create">
 
-                <!-- Campo: Nome -->
+                <!-- Campo: NOME -->
                 <div class="mb-3">
                     <label class="form-label">Nome</label>
 
                     <!-- 
-                        name = "Nome" -> nome do campo enviado para o controller
+                        name = "Nome" -> nome do campo enviado para o controller, tem de ser igual ao ClientModel.Name
                         class = "form-control" -> estilo Bootstrap
                         required -> obrigatório (validação no browser)
                     -->     
-                    <input name="Nome"
-                           class="form-control" required 
+                    <input name = "Name"
+                           class = "form-control"
                            placeholder = "Ex: Rafael"
                            required />
                 </div>
+
+                
+                <!-- Campo: EMAIL -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+
+                    <!-- 
+                        type = "email" -> valida formato de email
+                        name = "Email" -> ClientModel.Email
+                    -->
+                    <input name = "Email"
+                           type = "email"
+                           class = "form-control"
+                           placeholder = "exemplo@email.com"
+                           required />
+                </div>
+
 
                 <!-- Campo: NIF -->
                 <div class="mb-3">
                     <label class="form-label">NIF</label>
 
                     <!-- 
-                        type = "number" -> só aceita números
-                        name = "Nif" -> será recebido no controller
+                        name = "NIF" -> tem que bater com ClientModel.NIF
+                        pattern -> apenas 9 digitos
                     -->
-                    <input name="Nif"
-                           type="number"
-                           class="form-control"
+                    <input name = "NIF"
+                           class = "form-control"
                            placeholder = "123456789"
+                           pattern = "[0-9]{9}"
                            required />
                 </div>
+
+               
+                <!-- Campo: MORADA -->
+                <div class="mb-3">
+                    <label class="form-label">Morada</label>
+
+                    <!-- opcional -->
+                    <input name="Address"
+                           class="form-control"
+                           placeholder="Rua, nº, cidade" />
+                </div>
+
+               
+                <!-- Campo: TELEFONE -->
+                <div class="mb-3">
+                    <label class="form-label">Telefone</label>
+
+                    <!-- opcional -->
+                    <input name="Phone"
+                           class="form-control"
+                           placeholder="912345678" />
+                </div>
+
 
                 <!-- Botão de Submissão -->
                 <!-- type = "submit" -> envia o formulário -->
