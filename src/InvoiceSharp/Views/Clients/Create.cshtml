@@ -1,0 +1,105 @@
+@{
+    // Define o título da página
+    ViewData["Title"] = "Criar Cliente";
+}
+
+<!-- Container Bootsrap para centralizar e dar margem -->
+<div class="container mt-4">
+
+    <!-- Card (Caixa visual) -->
+    <div class="card shadow">
+
+        <!-- Cabeçalho do card -->
+        <div class="card-header bg-primary text-white">
+            <h3>Criar Cliente</h3>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Formulário -->
+            <!-- method = "post" -> envia dados para o servidor -->
+            <!-- action = "Client/Create" -> endpoint do controller -->
+            <form method="post" action="/Clients/Create">
+
+                <!-- Campo: NOME -->
+                <div class="mb-3">
+                    <label class="form-label">Nome</label>
+
+                    <!-- 
+                        name = "Nome" -> nome do campo enviado para o controller, tem de ser igual ao ClientModel.Name
+                        class = "form-control" -> estilo Bootstrap
+                        required -> obrigatório (validação no browser)
+                    -->     
+                    <input name = "Name"
+                           class = "form-control"
+                           placeholder = "Ex: Rafael"
+                           required />
+                </div>
+
+                
+                <!-- Campo: EMAIL -->
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+
+                    <!-- 
+                        type = "email" -> valida formato de email
+                        name = "Email" -> ClientModel.Email
+                    -->
+                    <input name = "Email"
+                           type = "email"
+                           class = "form-control"
+                           placeholder = "exemplo@email.com"
+                           required />
+                </div>
+
+
+                <!-- Campo: NIF -->
+                <div class="mb-3">
+                    <label class="form-label">NIF</label>
+
+                    <!-- 
+                        name = "NIF" -> tem que bater com ClientModel.NIF
+                        pattern -> apenas 9 digitos
+                    -->
+                    <input name = "NIF"
+                           class = "form-control"
+                           placeholder = "123456789"
+                           pattern = "[0-9]{9}"
+                           required />
+                </div>
+
+               
+                <!-- Campo: MORADA -->
+                <div class="mb-3">
+                    <label class="form-label">Morada</label>
+
+                    <!-- opcional -->
+                    <input name="Address"
+                           class="form-control"
+                           placeholder="Rua, nº, cidade" />
+                </div>
+
+               
+                <!-- Campo: TELEFONE -->
+                <div class="mb-3">
+                    <label class="form-label">Telefone</label>
+
+                    <!-- opcional -->
+                    <input name="Phone"
+                           class="form-control"
+                           placeholder="912345678" />
+                </div>
+
+
+                <!-- Botão de Submissão -->
+                <!-- type = "submit" -> envia o formulário -->
+                <button type="submit" class="btn btn-success">
+                    Guardar Cliente
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
