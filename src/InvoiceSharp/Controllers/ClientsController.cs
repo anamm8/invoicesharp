@@ -14,7 +14,7 @@ namespace InvoiceSharp.Controllers
             _context = context;
         }
 
-        // GET: /Client
+        // GET: /Clients
         public async Task<IActionResult> Index()
         {
             var clients = await _context.Clients
@@ -24,7 +24,7 @@ namespace InvoiceSharp.Controllers
             return View(clients);
         }
 
-        // GET: /Client/Details/5
+        // GET: /Clients/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,25 +34,25 @@ namespace InvoiceSharp.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (client == null)
+            if (clients == null)
                 return NotFound();
 
-            return View(client);
+            return View(clients);
         }
 
-        // GET: /Client/Create
+        // GET: /Clients/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: /Client/Create
+        // POST: /Clients/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ClientModel client)
         {
             if (!ModelState.IsValid)
-                return View(client);
+                return View(clients);
 
             _context.Clients.Add(client);
             await _context.SaveChangesAsync();
@@ -60,39 +60,39 @@ namespace InvoiceSharp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Client/Edit/5
+        // GET: /Clients/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
                 return NotFound();
 
-            var client = await _context.Clients.FindAsync(id);
+            var clients = await _context.Clients.FindAsync(id);
 
-            if (client == null)
+            if (clients == null)
                 return NotFound();
 
-            return View(client);
+            return View(clients);
         }
 
-        // POST: /Client/Edit/5
+        // POST: /Clients/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ClientModel client)
         {
-            if (id != client.Id)
+            if (id != clients.Id)
                 return NotFound();
 
             if (!ModelState.IsValid)
-                return View(client);
+                return View(clients);
 
             try
             {
-                _context.Update(client);
+                _context.Update(clients);
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                bool exists = await _context.Clients.AnyAsync(c => c.Id == client.Id);
+                bool exists = await _context.Clients.AnyAsync(c => c.Id == clients.Id);
                 if (!exists)
                     return NotFound();
 
@@ -102,7 +102,7 @@ namespace InvoiceSharp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: /Client/Delete/5
+        // GET: /Clients/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -112,22 +112,22 @@ namespace InvoiceSharp.Controllers
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (client == null)
+            if (clients == null)
                 return NotFound();
 
-            return View(client);
+            return View(clients);
         }
 
-        // POST: /Client/Delete/5
+        // POST: /Clients/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var client = await _context.Clients.FindAsync(id);
 
-            if (client != null)
+            if (clients != null)
             {
-                _context.Clients.Remove(client);
+                _context.Clients.Remove(clients);
                 await _context.SaveChangesAsync();
             }
 
