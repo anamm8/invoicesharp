@@ -26,6 +26,6 @@ namespace InvoiceSharp.Models
 
         public virtual ClientModel? Client { get; set; }
 
-        public List<InvoiceItemModel> Items { get; set; } = new();
+        public virtual ICollection<InvoiceItemModel> Items { get; set; } = new List<InvoiceItemModel>();
     }
 }
