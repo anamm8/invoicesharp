@@ -25,5 +25,7 @@ namespace InvoiceSharp.Models
         [ForeignKey("ClientId")]
 
         public virtual ClientModel? Client { get; set; }
+
+        public List<InvoiceItemModel> Items { get; set; } = new();
     }
 }
