@@ -24,7 +24,7 @@
             <!-- asp-controller -> InvoicesController -->
             <!-- asp-action -> método Create -->
             <!-- method POST -> envia dados -->
-            <form asp-controller="Invoices" asp-action="Create" method="post">
+            <form asp-controller="Invoice" asp-action="Create" method="post">
 
                 <!-- ============================= -->
                 <!-- CLIENT ID (FK para Client)   -->
@@ -133,7 +133,7 @@
                 </table>
 
                 <!-- Botão que chama a função JS para adicionar nova linha -->
-                <button type="button" class="btn btn-secondary" onclick="addRow()">
+                <button type="button" class="btn btn-secondary mt-2" onclick="addRow()">
                     + Adicionar Linha
                 </button>
 
@@ -146,27 +146,6 @@
                 </button>
 
             </form>
-
-
-            <!-- ============================= -->
-            <!-- RESULTADO (ALINHADO COM DIAGRAMA) -->
-            <!-- ============================= -->
-
-            <!-- Mostra mensagem de sucesso -->
-            @if (ViewBag.Success != null)
-            {
-                <div class="alert alert-success mt-3">
-                    Fatura criada com sucesso!
-                </div>
-            }
-
-            <!-- Mostra botão para abrir PDF -->
-            @if (ViewBag.PdfPath != null)
-            {
-                <a href="@ViewBag.PdfPath" class="btn btn-primary mt-2">
-                    Ver PDF
-                </a>
-            }
 
         </div>
     </div>
