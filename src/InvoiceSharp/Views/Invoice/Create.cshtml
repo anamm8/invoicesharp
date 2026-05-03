@@ -1,0 +1,63 @@
+@model InvoiceSharp.Models.InvoiceModel
+
+@{
+    ViewData["Title"] = "Criar Fatura";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3>Criar Fatura</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <form asp-action="Create" method="post">
+                <div class="mb-3">
+                    <label asp-for="ClientId" class="form-label">Cliente</label>
+                    <select asp-for="ClientId" class="form-select">
+                        <option value="">-- Selecionar cliente --</option>
+                        @foreach (var client in ViewBag.Clients)
+                        {
+                            <option value="@client.Id">@client.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Date" class="form-label">Data</label>
+                    <input asp-for="Date" class="form-control" type="date" />
+                    <span asp-validation-for="Date" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Subtotal" class="form-label">Subtotal</label>
+                    <input asp-for="Subtotal" class="form-control" />
+                    <span asp-validation-for="Subtotal" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="VATTotal" class="form-label">VAT Total</label>
+                    <input asp-for="VATTotal" class="form-control" />
+                    <span asp-validation-for="VATTotal" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Total" class="form-label">Total</label>
+                    <input asp-for="Total" class="form-control" />
+                    <span asp-validation-for="Total" class="text-danger"></span>
+                </div>
+
+                <button type="submit" class="btn btn-success">Criar Fatura</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
