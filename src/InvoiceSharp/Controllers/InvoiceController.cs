@@ -1,4 +1,5 @@
 using InvoiceSharp.Data;
+using InvoiceSharp.Exceptions;
 using InvoiceSharp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -45,10 +46,7 @@ namespace InvoiceSharp.Controllers
         // GET: /Invoice/Create
         public async Task<IActionResult> Create()
         {
-            ViewBag.Clients = await _context.Clients
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            await LoadClientsAsync();
 
             return View(new InvoiceModel
             {
@@ -61,35 +59,59 @@ namespace InvoiceSharp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InvoiceModel invoice)
         {
-            if (!await _context.Clients.AnyAsync(c => c.Id == invoice.ClientId))
+            try
             {
-                ModelState.AddModelError(nameof(invoice.ClientId), "Selecione um cliente válido.");
+                await EnsureClientExistsAsync(invoice.ClientId);
+
+                if (invoice.Total != invoice.Subtotal + invoice.VATTotal)
+                {
+                    ModelState.AddModelError(nameof(invoice.Total),
+                        "O Total deve ser igual a Subtotal + VATTotal.");
+                }
+
+                if (invoice.Date == default)
+                {
+                    invoice.Date = DateTime.Now;
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    await LoadClientsAsync();
+                    return View(invoice);
+                }
+
+                _context.Invoices.Add(invoice);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Fatura criada com sucesso.";
+                return RedirectToAction(nameof(Index));
             }
-
-            if (invoice.Total != invoice.Subtotal + invoice.VATTotal)
+            catch (ClientNotFoundException ex)
             {
-                ModelState.AddModelError(nameof(invoice.Total), "O Total deve ser igual a Subtotal + VATTotal.");
-            }
+                ModelState.AddModelError(nameof(invoice.ClientId), ex.Message);
 
-            if (invoice.Date == default)
-            {
-                invoice.Date = DateTime.Now;
-            }
-
-            if (!ModelState.IsValid)
-            {
-                ViewBag.Clients = await _context.Clients
-                    .AsNoTracking()
-                    .OrderBy(c => c.Name)
-                    .ToListAsync();
-
+                await LoadClientsAsync();
                 return View(invoice);
             }
+        }
 
-            _context.Invoices.Add(invoice);
-            await _context.SaveChangesAsync();
+        private async Task EnsureClientExistsAsync(int clientId)
+        {
+            bool exists = await _context.Clients.AnyAsync(c => c.Id == clientId);
 
-            return RedirectToAction(nameof(Index));
+            if (!exists)
+            {
+                throw new ClientNotFoundException(
+                    "O cliente indicado não existe. Verifique o cliente selecionado.");
+            }
+        }
+
+        private async Task LoadClientsAsync()
+        {
+            ViewBag.Clients = await _context.Clients
+                .AsNoTracking()
+                .OrderBy(c => c.Name)
+                .ToListAsync();
         }
     }
 }
