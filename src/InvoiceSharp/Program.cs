@@ -1,5 +1,7 @@
+using InvoiceSharp.Data;
+using InvoiceSharp.Interfaces;
+using InvoiceSharp.Repositories;
 using Microsoft.EntityFrameworkCore; 
-using InvoiceSharp.Data;           
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +10,10 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Repositories are registered with Scoped lifetime, meaning a new instance is created per HTTP request and shared within that request.
+builder.Services.AddScoped<IClientsRepository, ClientRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 var app = builder.Build();
 
