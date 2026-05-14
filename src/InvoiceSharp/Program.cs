@@ -12,7 +12,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllersWithViews();
 
 // Repositories are registered with Scoped lifetime, meaning a new instance is created per HTTP request and shared within that request.
-builder.Services.AddScoped<IClientsRepository, ClientRepository>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 var app = builder.Build();
