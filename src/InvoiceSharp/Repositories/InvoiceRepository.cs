@@ -5,14 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceSharp.Repositories
 {
-    public class InvoiceRepository : IInvoiceRepository
+    public class InvoiceRepository(AppDbContext _context) : IInvoiceRepository
     {
-        private readonly AppDbContext _context;
-
-        public InvoiceRepository(AppDbContext context)
-        {
-            _context = context;
-        }
 
         public async Task<IEnumerable<InvoiceModel>> GetAllWithClientsAsync()
         {
