@@ -1,0 +1,42 @@
+@model IEnumerable<InvoiceSharp.Models.ClientModel>
+
+@{
+    ViewData["Title"] = "Clientes";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h2>Clientes</h2>
+        </div>
+
+        <div class="card-body">
+
+            <a asp-action="Create" class="btn btn-success mb-3">
+                Novo Cliente
+            </a>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                @foreach (var client in Model)
+                {
+                    <tr>
+                        <td>@client.Name</td>
+                        <td>@client.Email</td>
+                    </tr>
+                }
+
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

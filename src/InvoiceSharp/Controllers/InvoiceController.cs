@@ -34,6 +34,7 @@ namespace InvoiceSharp.Controllers
 
             var invoice = await _context.Invoices
                 .Include(i => i.Client)
+                .Include(i => i.Items)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(i => i.Id == id);
 
@@ -72,6 +73,16 @@ namespace InvoiceSharp.Controllers
                 if (invoice.Date == default)
                 {
                     invoice.Date = DateTime.Now;
+                }
+
+                foreach (var error in ModelState)
+                {
+                    Console.WriteLine($"KEY: {error.Key}");
+
+                    foreach (var subError in error.Value.Errors)
+                    {
+                        Console.WriteLine($"ERROR: {subError.ErrorMessage}");
+                    }
                 }
 
                 if (!ModelState.IsValid)

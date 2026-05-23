@@ -1,15 +1,17 @@
+@model InvoiceSharp.Models.ClientModel
+
 @{
     // Define o título da página
     ViewData["Title"] = "Criar Cliente";
 }
 
-<!-- Container Bootsrap para centralizar e dar margem -->
+<!-- Container Bootstrap -->
 <div class="container mt-4">
 
-    <!-- Card (Caixa visual) -->
+    <!-- Card -->
     <div class="card shadow">
 
-        <!-- Cabeçalho do card -->
+        <!-- Cabeçalho -->
         <div class="card-header bg-primary text-white">
             <h3>Criar Cliente</h3>
         </div>
@@ -17,85 +19,74 @@
         <div class="card-body">
 
             <!-- Formulário -->
-            <!-- method = "post" -> envia dados para o servidor -->
-            <!-- action = "Client/Create" -> endpoint do controller -->
             <form method="post" action="/Clients/Create">
 
-                <!-- Campo: NOME -->
-                <div class="mb-3">
-                    <label class="form-label">Nome</label>
+                @Html.AntiForgeryToken()
 
-                    <!-- 
-                        name = "Nome" -> nome do campo enviado para o controller, tem de ser igual ao ClientModel.Name
-                        class = "form-control" -> estilo Bootstrap
-                        required -> obrigatório (validação no browser)
-                    -->     
-                    <input name = "Name"
-                           class = "form-control"
-                           placeholder = "Ex: Rafael"
-                           required />
+                <!-- Nome -->
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+
+                    <input asp-for="Name"
+                           class="form-control"
+                           placeholder="Ex: Rafael" />
+
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
-                
-                <!-- Campo: EMAIL -->
+                <!-- Email -->
                 <div class="mb-3">
-                    <label class="form-label">Email</label>
+                    <label asp-for="Email" class="form-label"></label>
 
-                    <!-- 
-                        type = "email" -> valida formato de email
-                        name = "Email" -> ClientModel.Email
-                    -->
-                    <input name = "Email"
-                           type = "email"
-                           class = "form-control"
-                           placeholder = "exemplo@email.com"
-                           required />
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           placeholder="exemplo@email.com" />
+
+                    <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-
-                <!-- Campo: NIF -->
+                <!-- NIF -->
                 <div class="mb-3">
-                    <label class="form-label">NIF</label>
+                    <label asp-for="NIF" class="form-label"></label>
 
-                    <!-- 
-                        name = "NIF" -> tem que bater com ClientModel.NIF
-                        pattern -> apenas 9 digitos
-                    -->
-                    <input name = "NIF"
-                           class = "form-control"
-                           placeholder = "123456789"
-                           pattern = "[0-9]{9}"
-                           required />
+                    <input asp-for="NIF"
+                           class="form-control"
+                           placeholder="123456789" />
+
+                    <span asp-validation-for="NIF" class="text-danger"></span>
                 </div>
 
-               
-                <!-- Campo: MORADA -->
+                <!-- Morada -->
                 <div class="mb-3">
-                    <label class="form-label">Morada</label>
+                    <label asp-for="Address" class="form-label"></label>
 
-                    <!-- opcional -->
-                    <input name="Address"
+                    <input asp-for="Address"
                            class="form-control"
                            placeholder="Rua, nº, cidade" />
+
+                    <span asp-validation-for="Address" class="text-danger"></span>
                 </div>
 
-               
-                <!-- Campo: TELEFONE -->
+                <!-- Telefone -->
                 <div class="mb-3">
-                    <label class="form-label">Telefone</label>
+                    <label asp-for="Phone" class="form-label"></label>
 
-                    <!-- opcional -->
-                    <input name="Phone"
+                    <input asp-for="Phone"
                            class="form-control"
                            placeholder="912345678" />
+
+                    <span asp-validation-for="Phone" class="text-danger"></span>
                 </div>
 
-
-                <!-- Botão de Submissão -->
-                <!-- type = "submit" -> envia o formulário -->
+                <!-- Botões -->
                 <button type="submit" class="btn btn-success">
                     Guardar Cliente
                 </button>
+
+                <a asp-action="Index" class="btn btn-secondary">
+                    Cancelar
+                </a>
 
             </form>
 
