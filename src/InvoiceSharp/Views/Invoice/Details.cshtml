@@ -1,0 +1,120 @@
+@model InvoiceSharp.Models.InvoiceModel
+
+@{
+    ViewData["Title"] = "Detalhes da Fatura";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <!-- Cabeçalho -->
+        <div class="card-header bg-primary text-white">
+            <h3>Detalhes da Fatura</h3>
+        </div>
+
+        <div class="card-body">
+
+            <!-- Dados principais -->
+            <div class="row mb-4">
+
+                <div class="col-md-4">
+                    <strong>ID:</strong>
+                    @Model.Id
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Cliente:</strong>
+                    @Model.Client?.Name
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Data:</strong>
+                    @Model.Date.ToShortDateString()
+                </div>
+
+            </div>
+
+            <!-- Totais -->
+            <div class="row mb-4">
+
+                <div class="col-md-4">
+                    <strong>Subtotal:</strong>
+                    @Model.Subtotal €
+                </div>
+
+                <div class="col-md-4">
+                    <strong>IVA:</strong>
+                    @Model.VATTotal €
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Total:</strong>
+                    @Model.Total €
+                </div>
+
+            </div>
+
+            <hr />
+
+            <h5>Itens da Fatura</h5>
+
+            <!-- Tabela -->
+            <table class="table table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                        <th>Preço</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+
+                                <td>
+                                    @item.Description
+                                </td>
+
+                                <td>
+                                    @item.Quantity
+                                </td>
+
+                                <td>
+                                    @item.UnitPrice €
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">
+                                Nenhum item encontrado.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <!-- Botão voltar -->
+            <a asp-controller="Invoice"
+               asp-action="Index"
+               class="btn btn-secondary">
+
+                Voltar
+            </a>
+
+        </div>
+    </div>
+
+</div>
