@@ -1,28 +1,30 @@
-using InvoiceSharp.Data;
 using InvoiceSharp.Exceptions;
+using InvoiceSharp.Interfaces;
 using InvoiceSharp.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceSharp.Controllers
 {
     public class InvoiceController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IClientsRepository _clientsRepository;
+        private readonly IInvoicePdfGenerator _invoicePdfGenerator;
 
-        public InvoiceController(AppDbContext context)
+        public InvoiceController(
+            IInvoiceRepository invoiceRepository,
+            IClientsRepository clientsRepository,
+            IInvoicePdfGenerator invoicePdfGenerator)
         {
-            _context = context;
+            _invoiceRepository = invoiceRepository;
+            _clientsRepository = clientsRepository;
+            _invoicePdfGenerator = invoicePdfGenerator;
         }
 
         // GET: /Invoice
         public async Task<IActionResult> Index()
         {
-            var invoices = await _context.Invoices
-                .Include(i => i.Client)
-                .AsNoTracking()
-                .ToListAsync();
-
+            var invoices = await _invoiceRepository.GetAllWithClientsAsync();
             return View(invoices);
         }
 
@@ -32,11 +34,7 @@ namespace InvoiceSharp.Controllers
             if (id == null)
                 return NotFound();
 
-            var invoice = await _context.Invoices
-                .Include(i => i.Client)
-                .Include(i => i.Items)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(i => i.Id == id);
+            var invoice = await _invoiceRepository.GetByIdWithDetailsAsync(id.Value);
 
             if (invoice == null)
                 return NotFound();
@@ -64,25 +62,23 @@ namespace InvoiceSharp.Controllers
             {
                 await EnsureClientExistsAsync(invoice.ClientId);
 
-                if (invoice.Total != invoice.Subtotal + invoice.VATTotal)
-                {
-                    ModelState.AddModelError(nameof(invoice.Total),
-                        "O Total deve ser igual a Subtotal + VATTotal.");
-                }
-
                 if (invoice.Date == default)
                 {
                     invoice.Date = DateTime.Now;
                 }
 
-                foreach (var error in ModelState)
+                // If line items are provided, calculate invoice totals from them.
+                // This prevents valid invoices from being rejected merely because totals were left at zero in the form.
+                if (invoice.Items != null && invoice.Items.Any())
                 {
-                    Console.WriteLine($"KEY: {error.Key}");
+                    CalculateTotalsFromItems(invoice);
+                    ClearCalculatedTotalsFromModelState();
+                }
 
-                    foreach (var subError in error.Value.Errors)
-                    {
-                        Console.WriteLine($"ERROR: {subError.ErrorMessage}");
-                    }
+                if (invoice.Total != invoice.Subtotal + invoice.VATTotal)
+                {
+                    ModelState.AddModelError(nameof(invoice.Total),
+                        "O Total deve ser igual a Subtotal + IVA.");
                 }
 
                 if (!ModelState.IsValid)
@@ -91,8 +87,8 @@ namespace InvoiceSharp.Controllers
                     return View(invoice);
                 }
 
-                _context.Invoices.Add(invoice);
-                await _context.SaveChangesAsync();
+                await _invoiceRepository.AddAsync(invoice);
+                await _invoiceRepository.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Fatura criada com sucesso.";
                 return RedirectToAction(nameof(Index));
@@ -106,9 +102,26 @@ namespace InvoiceSharp.Controllers
             }
         }
 
+        // GET: /Invoice/GeneratePdf/5
+        public async Task<IActionResult> GeneratePdf(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var invoice = await _invoiceRepository.GetByIdWithDetailsAsync(id.Value);
+
+            if (invoice == null)
+                return NotFound();
+
+            var pdfBytes = _invoicePdfGenerator.Generate(invoice);
+            var fileName = $"fatura-{invoice.Id}.pdf";
+
+            return File(pdfBytes, "application/pdf", fileName);
+        }
+
         private async Task EnsureClientExistsAsync(int clientId)
         {
-            bool exists = await _context.Clients.AnyAsync(c => c.Id == clientId);
+            bool exists = await _clientsRepository.ExistsAsync(clientId);
 
             if (!exists)
             {
@@ -119,10 +132,22 @@ namespace InvoiceSharp.Controllers
 
         private async Task LoadClientsAsync()
         {
-            ViewBag.Clients = await _context.Clients
-                .AsNoTracking()
-                .OrderBy(c => c.Name)
-                .ToListAsync();
+            var clients = await _clientsRepository.GetAllAsync();
+            ViewBag.Clients = clients.OrderBy(c => c.Name).ToList();
+        }
+
+        private static void CalculateTotalsFromItems(InvoiceModel invoice)
+        {
+            invoice.Subtotal = invoice.Items.Sum(item => item.Quantity * item.UnitPrice);
+            invoice.VATTotal = invoice.Items.Sum(item => item.Quantity * item.UnitPrice * item.VATRate / 100);
+            invoice.Total = invoice.Subtotal + invoice.VATTotal;
+        }
+
+        private void ClearCalculatedTotalsFromModelState()
+        {
+            ModelState.Remove(nameof(InvoiceModel.Subtotal));
+            ModelState.Remove(nameof(InvoiceModel.VATTotal));
+            ModelState.Remove(nameof(InvoiceModel.Total));
         }
     }
 }

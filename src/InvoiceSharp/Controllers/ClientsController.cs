@@ -1,4 +1,4 @@
-using InvoiceSharp.Data;
+using InvoiceSharp.Interfaces;
 using InvoiceSharp.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -7,20 +7,17 @@ namespace InvoiceSharp.Controllers
 {
     public class ClientsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IClientsRepository _clientsRepository;
 
-        public ClientsController(AppDbContext context)
+        public ClientsController(IClientsRepository clientsRepository)
         {
-            _context = context;
+            _clientsRepository = clientsRepository;
         }
 
         // GET: /Clients
         public async Task<IActionResult> Index()
         {
-            var clients = await _context.Clients
-                .AsNoTracking()
-                .ToListAsync();
-
+            var clients = await _clientsRepository.GetAllAsync();
             return View(clients);
         }
 
@@ -30,9 +27,7 @@ namespace InvoiceSharp.Controllers
             if (id == null)
                 return NotFound();
 
-            var client = await _context.Clients
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var client = await _clientsRepository.GetByIdAsync(id.Value);
 
             if (client == null)
                 return NotFound();
@@ -54,8 +49,8 @@ namespace InvoiceSharp.Controllers
             if (!ModelState.IsValid)
                 return View(client);
 
-            _context.Clients.Add(client);
-            await _context.SaveChangesAsync();
+            await _clientsRepository.AddAsync(client);
+            await _clientsRepository.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
@@ -66,7 +61,7 @@ namespace InvoiceSharp.Controllers
             if (id == null)
                 return NotFound();
 
-            var client = await _context.Clients.FindAsync(id);
+            var client = await _clientsRepository.GetByIdAsync(id.Value);
 
             if (client == null)
                 return NotFound();
@@ -87,12 +82,12 @@ namespace InvoiceSharp.Controllers
 
             try
             {
-                _context.Update(client);
-                await _context.SaveChangesAsync();
+                _clientsRepository.Update(client);
+                await _clientsRepository.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                bool exists = await _context.Clients.AnyAsync(c => c.Id == client.Id);
+                bool exists = await _clientsRepository.ExistsAsync(client.Id);
                 if (!exists)
                     return NotFound();
 
@@ -108,9 +103,7 @@ namespace InvoiceSharp.Controllers
             if (id == null)
                 return NotFound();
 
-            var client = await _context.Clients
-                .AsNoTracking()
-                .FirstOrDefaultAsync(c => c.Id == id);
+            var client = await _clientsRepository.GetByIdAsync(id.Value);
 
             if (client == null)
                 return NotFound();
@@ -123,13 +116,8 @@ namespace InvoiceSharp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var client = await _context.Clients.FindAsync(id);
-
-            if (client != null)
-            {
-                _context.Clients.Remove(client);
-                await _context.SaveChangesAsync();
-            }
+            await _clientsRepository.DeleteAsync(id);
+            await _clientsRepository.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

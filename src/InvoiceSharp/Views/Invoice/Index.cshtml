@@ -72,9 +72,16 @@
                                        asp-action="Details"
                                        asp-route-id="@invoice.Id"
                                        class="btn btn-primary btn-sm">
-
                                         Ver
                                     </a>
+									
+									<!-- Gerar PDF -->
+									<a asp-controller="Invoice"
+									   asp-action="GeneratePdf"
+									   asp-route-id="@invoice.Id"
+									   class="btn btn-secondary btn-sm ms-1">
+										Gerar PDF
+									</a>
 
                                 </td>
 

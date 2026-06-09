@@ -1,7 +1,11 @@
 using InvoiceSharp.Data;
 using InvoiceSharp.Interfaces;
 using InvoiceSharp.Repositories;
+using InvoiceSharp.Services;
 using Microsoft.EntityFrameworkCore; 
+using PdfSharp.Fonts;
+
+GlobalFontSettings.UseWindowsFontsUnderWindows = true;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,7 @@ builder.Services.AddControllersWithViews();
 // Repositories are registered with Scoped lifetime, meaning a new instance is created per HTTP request and shared within that request.
 builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IInvoicePdfGenerator, InvoicePdfGenerator>();
 
 var app = builder.Build();
 
