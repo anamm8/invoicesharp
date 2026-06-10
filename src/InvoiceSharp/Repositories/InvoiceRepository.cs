@@ -20,6 +20,7 @@ namespace InvoiceSharp.Repositories
             return await _context.Invoices
                 .AsNoTracking()
                 .Include(i => i.Client)
+				.Include(i => i.Items)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 

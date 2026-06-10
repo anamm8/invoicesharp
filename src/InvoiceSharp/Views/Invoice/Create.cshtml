@@ -20,51 +20,55 @@
 
                 <!-- CLIENTE -->
                 <div class="form-group mb-3">
-					<label asp-for="ClientId" class="control-label"></label>
-					<select asp-for="ClientId" class="form-control">
-						<option value="">-- Selecionar cliente --</option>
-						@foreach (var client in ViewBag.Clients)
-						{
-							<option value="@client.Id">@client.Name</option>
-						}
-					</select>
-					<span asp-validation-for="ClientId" class="text-danger"></span>
-				</div>
+                    <label asp-for="ClientId" class="control-label"></label>
+                    <select asp-for="ClientId" class="form-control">
+                        <option value="">-- Selecionar cliente --</option>
+                        @foreach (var client in ViewBag.Clients)
+                        {
+                            <option value="@client.Id">@client.Name</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ClientId" class="text-danger"></span>
+                </div>
 
                 <!-- DATA -->
                 <div class="mb-3">
                     <label asp-for="Date" class="form-label"></label>
-
                     <input asp-for="Date" type="date" class="form-control" />
-
                     <span asp-validation-for="Date" class="text-danger"></span>
                 </div>
 
                 <!-- SUBTOTAL -->
                 <div class="mb-3">
                     <label asp-for="Subtotal" class="form-label"></label>
-
-                    <input asp-for="Subtotal" class="form-control" placeholder="0.00" />
-
-                    <span asp-validation-for="Subtotal" class="text-danger"></span>
+                    <input asp-for="Subtotal"
+                           class="form-control"
+                           type="text"
+                           inputmode="decimal"
+                           placeholder="0,00"
+                           data-val="false" />
                 </div>
 
                 <!-- IVA -->
                 <div class="mb-3">
                     <label asp-for="VATTotal" class="form-label"></label>
-
-                    <input asp-for="VATTotal" class="form-control" placeholder="0.00" />
-
-                    <span asp-validation-for="VATTotal" class="text-danger"></span>
+                    <input asp-for="VATTotal"
+                           class="form-control"
+                           type="text"
+                           inputmode="decimal"
+                           placeholder="0,00"
+                           data-val="false" />
                 </div>
 
                 <!-- TOTAL -->
                 <div class="mb-3">
                     <label asp-for="Total" class="form-label"></label>
-
-                    <input asp-for="Total" class="form-control" placeholder="0.00" />
-
-                    <span asp-validation-for="Total" class="text-danger"></span>
+                    <input asp-for="Total"
+                           class="form-control"
+                           type="text"
+                           inputmode="decimal"
+                           placeholder="0,00"
+                           data-val="false" />
                 </div>
 
                 <hr />
@@ -76,6 +80,7 @@
                             <th>Descrição</th>
                             <th>Quantidade</th>
                             <th>Preço</th>
+                            <th>IVA (%)</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -102,58 +107,81 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        if (window.jQuery && $.validator) {
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) ||
+                    /^-?\d+(?:[,.]\d+)?$/.test(value);
+            };
+        }
+
+        let index = 0;
+
+        function addRow() {
+
+            const tableBody = document
+                .getElementById("itemsTable")
+                .getElementsByTagName("tbody")[0];
+
+            const row = tableBody.insertRow();
+
+            row.innerHTML = `
+                <td>
+                    <input
+                        name="Items[${index}].Description"
+                        class="form-control"
+                        required />
+                </td>
+
+                <td>
+                    <input
+                        name="Items[${index}].Quantity"
+                        type="number"
+                        min="1"
+                        class="form-control"
+                        required />
+                </td>
+
+                <td>
+                    <input
+                        name="Items[${index}].UnitPrice"
+                        value="100,00"
+                        class="form-control"
+                        inputmode="decimal"
+                        required />
+                </td>
+
+                <td>
+                    <input
+                        name="Items[${index}].VATRate"
+                        type="number"
+                        min="0"
+                        max="100"
+                        value="23"
+                        class="form-control"
+                        required />
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        onclick="removeRow(this)">
+                        X
+                    </button>
+                </td>
+            `;
+
+            index++;
+        }
+
+        function removeRow(button) {
+            button.closest("tr").remove();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            addRow();
+        });
+    </script>
 }
-
-<script>
-    let index = 0;
-
-    function addRow() {
-
-        const tableBody = document
-            .getElementById("itemsTable")
-            .getElementsByTagName("tbody")[0];
-
-        const row = tableBody.insertRow();
-
-        row.innerHTML = `
-            <td>
-                <input 
-                    name="Items[${index}].Description"
-                    class="form-control"
-                    required />
-            </td>
-
-            <td>
-                <input 
-                    name="Items[${index}].Quantity"
-                    type="number"
-                    min="1"
-                    class="form-control"
-                    required />
-            </td>
-
-            <td>
-                <input 
-                    name="Items[${index}].UnitPrice"
-                    value="100"
-                    class="form-control"
-                    required />
-            </td>
-
-            <td>
-                <button 
-                    type="button"
-                    class="btn btn-danger"
-                    onclick="removeRow(this)">
-                    X
-                </button>
-            </td>
-        `;
-
-        index++;
-    }
-
-    function removeRow(button) {
-        button.closest("tr").remove();
-    }
-</script>
