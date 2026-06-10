@@ -4,6 +4,8 @@ using InvoiceSharp.Repositories;
 using InvoiceSharp.Services;
 using Microsoft.EntityFrameworkCore; 
 using PdfSharp.Fonts;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 GlobalFontSettings.UseWindowsFontsUnderWindows = true;
 
@@ -20,7 +22,18 @@ builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<IInvoicePdfGenerator, InvoicePdfGenerator>();
 
+var supportedCultures = new[] { new CultureInfo("pt-PT") };
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("pt-PT");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
 var app = builder.Build();
+
+app.UseRequestLocalization();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

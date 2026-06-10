@@ -67,6 +67,17 @@ namespace InvoiceSharp.Controllers
                     invoice.Date = DateTime.Now;
                 }
 
+				if (invoice.Items != null)
+				{
+					invoice.Items = invoice.Items
+						.Where(item =>
+							!string.IsNullOrWhiteSpace(item.Description) &&
+							item.Quantity > 0 &&
+							item.UnitPrice >= 0)
+						.ToList();
+				}
+
+
                 // If line items are provided, calculate invoice totals from them.
                 // This prevents valid invoices from being rejected merely because totals were left at zero in the form.
                 if (invoice.Items != null && invoice.Items.Any())
